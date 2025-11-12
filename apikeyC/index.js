@@ -13,7 +13,6 @@ const dbConfig = {
   database: 'apikey'  // nama database kamu
 }
 
-
 // Buat pool koneksi MySQL
 const db = mysql.createPool(dbConfig)
 
@@ -29,7 +28,6 @@ async function testConnection() {
     process.exit(1) // keluar dari aplikasi kalau gagal
   }
 }
-
 
 // Jalankan test koneksi di awal
 testConnection()
@@ -47,6 +45,10 @@ function generateKey(length = 32) {
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json())
 
+// Serve index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'))
+})
 
 // Endpoint untuk buat API key
 app.post('/api/create', async (req, res) => {
@@ -60,4 +62,24 @@ app.post('/api/create', async (req, res) => {
     console.error('❌ [CREATE ERROR]', err)
     return res.status(500).json({ ok: false, error: 'internal' })
   }
+})
+
+// Endpoint untuk verifikasi API key
+app.post('/api/verify', async (req, res) => {
+  try {
+    const { key } = req.body || {}
+    if (!key) return res.status(400).json({ ok: false, error: 'missing key' })
+
+    const [rows] = await db.query('SELECT * FROM api_keys WHERE api_key = ?', [key])
+    const isValid = rows.length > 0
+    console.log(`🔍 [VERIFY] Key: ${key} → ${isValid ? 'VALID' : 'INVALID'}`)
+    return res.json({ ok: true, valid: isValid })
+  } catch (err) {
+    console.error('❌ [VERIFY ERROR]', err)
+    return res.status(500).json({ ok: false, error: 'internal' })
+  }
+})
+
+app.listen(port, () => {
+  console.log(`🚀 Server berjalan di http://localhost:${port}`)
 })
