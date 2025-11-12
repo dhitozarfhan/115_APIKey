@@ -46,3 +46,18 @@ function generateKey(length = 32) {
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json())
+
+
+// Endpoint untuk buat API key
+app.post('/api/create', async (req, res) => {
+  try {
+    const length = parseInt(req.body.length, 10) || 32
+    const key = generateKey(length)
+    await db.query('INSERT INTO api_keys (api_key) VALUES (?)', [key])
+    console.log(`🆕 [CREATE] API key dibuat: ${key}`)
+    return res.json({ ok: true, key })
+  } catch (err) {
+    console.error('❌ [CREATE ERROR]', err)
+    return res.status(500).json({ ok: false, error: 'internal' })
+  }
+})
