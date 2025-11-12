@@ -29,3 +29,16 @@ async function testConnection() {
     process.exit(1) // keluar dari aplikasi kalau gagal
   }
 }
+
+
+// Jalankan test koneksi di awal
+testConnection()
+
+// Fungsi generate API key
+function generateKey(length = 32) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  const bytes = crypto.randomBytes(length)
+  let out = ''
+  for (let i = 0; i < length; i++) out += chars[bytes[i] % chars.length]
+  return out
+}
