@@ -42,3 +42,7 @@ function generateKey(length = 32) {
   for (let i = 0; i < length; i++) out += chars[bytes[i] % chars.length]
   return out
 }
+
+// Middleware
+app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.json())
