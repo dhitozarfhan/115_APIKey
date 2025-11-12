@@ -12,3 +12,7 @@ const dbConfig = {
   password: 'Superhero02',           // ubah kalau ada password
   database: 'apikey'  // nama database kamu
 }
+
+
+// Buat pool koneksi MySQL
+const db = mysql.createPool(dbConfig)
