@@ -16,3 +16,16 @@ const dbConfig = {
 
 // Buat pool koneksi MySQL
 const db = mysql.createPool(dbConfig)
+
+// Fungsi untuk test koneksi
+async function testConnection() {
+  try {
+    const connection = await db.getConnection()
+    console.log('✅ [DATABASE] Koneksi ke MySQL berhasil!')
+    connection.release()
+  } catch (err) {
+    console.error('❌ [DATABASE] Gagal konek ke MySQL:')
+    console.error(err.message)
+    process.exit(1) // keluar dari aplikasi kalau gagal
+  }
+}
